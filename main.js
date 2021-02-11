@@ -552,7 +552,9 @@ let SpriteAnimComponent = class SpriteAnimComponent {
     ngOnInit() {
         this.SetSpriteSheet();
         this.PlayAnimation(this.defaultAnim);
-        this.CalcSizes();
+    }
+    ngAfterViewInit() {
+        this.CalcSizes(null);
     }
     ngOnDestroy() {
         this.ClearAnimInterval();
@@ -561,8 +563,8 @@ let SpriteAnimComponent = class SpriteAnimComponent {
         this.spriteSheet = "assets/sprites/" + this.spriteSheetInfo.name + ".png";
     }
     ;
-    CalcSizes() {
-        this.trueHeightSprite = Math.trunc(window.innerHeight * this.heightSprite / 100);
+    CalcSizes($event) {
+        this.trueHeightSprite = Math.trunc(document.documentElement.clientHeight * this.heightSprite / 100);
         let ratioSprite = this.trueHeightSprite / this.spriteSheetInfo.sizeY;
         this.trueWidhtSprite = this.spriteSheetInfo.sizeX * ratioSprite;
     }
