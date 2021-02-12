@@ -1,0 +1,22 @@
+{
+    "name": "wolf",
+    "sizeX": 388,
+    "sizeY": 192,
+    "columnN": 15,
+    "iddleAnim": {
+        "position": 0,
+        "length": 12,
+        "speed": 100,
+        "play": 0
+    },
+    "attackAnim": {
+        "position": 1,
+        "length": 15,
+        "speed": 80,
+        "play": 1
+    },
+    "health": 100,
+    "coldDown": 6,
+    "damage": 50,
+    "height": 30
+}

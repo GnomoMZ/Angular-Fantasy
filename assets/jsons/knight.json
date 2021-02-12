@@ -1,0 +1,22 @@
+{
+    "name": "knight",
+    "sizeX": 384,
+    "sizeY": 192,
+    "columnN": 14,
+    "iddleAnim": {
+        "position": 0,
+        "length": 14,
+        "speed": 100,
+        "play": 0
+    },
+    "attackAnim": {
+        "position": 1,
+        "length": 14,
+        "speed": 70,
+        "play": 1
+    },
+    "health": 100,
+    "coldDown": 4,
+    "damage": 50,
+    "height": 20
+}
