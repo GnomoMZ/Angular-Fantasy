@@ -447,9 +447,11 @@ let CharacterComponent = class CharacterComponent {
     }
     TakeDamage(damage) {
         this.character.TakeDamage(damage);
-        if (this.character.IsDead())
-            this.Dead();
         this.damagesQueued.push(damage);
+        if (this.character.IsDead()) {
+            this.Dead();
+            this.AddDamageToShow(damage);
+        }
     }
     Update(dt) {
         if (this.character.ResolverCDBar(dt))
