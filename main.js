@@ -953,7 +953,7 @@ InteractionEventsService = tslib__WEBPACK_IMPORTED_MODULE_0__["__decorate"]([
 /*! exports provided: name, sizeX, sizeY, columnN, iddleAnim, attackAnim, health, coldDown, damage, height, delayAttack, default */
 /***/ (function(module) {
 
-module.exports = JSON.parse("{\"name\":\"knight\",\"sizeX\":384,\"sizeY\":192,\"columnN\":14,\"iddleAnim\":{\"position\":0,\"length\":14,\"speed\":100,\"play\":0},\"attackAnim\":{\"position\":1,\"length\":14,\"speed\":70,\"play\":1},\"health\":100,\"coldDown\":4,\"damage\":50,\"height\":20,\"delayAttack\":700}");
+module.exports = JSON.parse("{\"name\":\"knight\",\"sizeX\":384,\"sizeY\":192,\"columnN\":14,\"iddleAnim\":{\"position\":0,\"length\":14,\"speed\":100,\"play\":0},\"attackAnim\":{\"position\":1,\"length\":14,\"speed\":70,\"play\":1},\"health\":125,\"coldDown\":4,\"damage\":50,\"height\":20,\"delayAttack\":700}");
 
 /***/ }),
 

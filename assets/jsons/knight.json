@@ -15,7 +15,7 @@
         "speed": 70,
         "play": 1
     },
-    "health": 100,
+    "health": 125,
     "coldDown": 4,
     "damage": 50,
     "height": 20,
