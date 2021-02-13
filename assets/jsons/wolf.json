@@ -15,8 +15,9 @@
         "speed": 80,
         "play": 1
     },
-    "health": 100,
+    "health": 65,
     "coldDown": 6,
-    "damage": 50,
-    "height": 30
+    "damage": 20,
+    "height": 30,
+    "delayAttack":750
 }

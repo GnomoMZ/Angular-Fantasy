@@ -279,6 +279,7 @@ class Character {
         this.coldDown = info.coldDown;
         this.damage = info.damage;
         this.height = info.height;
+        this.delayAttack = info.delayAttack;
     }
     GetIddle() {
         return this.iddleAnim;
@@ -321,25 +322,23 @@ class Character {
     GetColdDown() {
         return this.coldDown;
     }
-    Update(dt) {
-        this.ResolverCDBar(dt);
-    }
     ResolverCDBar(dt) {
+        let hasToAttack = false;
         this.timeCd += dt;
         if (this.timeCd >= this.coldDown) {
             this.timeCd = this.coldDown;
-            //attack
-            this.attackFnc();
+            hasToAttack = true;
             setTimeout(() => {
                 this.timeCd = 0;
             });
         }
+        return hasToAttack;
     }
     GetCDBarStyle() {
         return this.timeCd / this.coldDown * 100 + "%";
     }
-    SetAttackCallback(callback) {
-        this.attackFnc = callback;
+    GetAttackData() {
+        return { damage: this.damage, isPlayer: this.IsPlayer(), delay: this.delayAttack };
     }
 }
 Character.ctorParameters = () => [
@@ -393,26 +392,32 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "CharacterComponent", function() { return CharacterComponent; });
 /* harmony import */ var tslib__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! tslib */ "./node_modules/tslib/tslib.es6.js");
 /* harmony import */ var _angular_core__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! @angular/core */ "./node_modules/@angular/core/fesm2015/core.js");
+/* harmony import */ var src_app_services_interaction_events_service__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! src/app/services/interaction-events.service */ "./src/app/services/interaction-events.service.ts");
+
 
 
 let CharacterComponent = class CharacterComponent {
-    constructor() {
-        this.isPlayer = false;
+    constructor(interactionEventsService) {
+        this.interactionEventsService = interactionEventsService;
     }
     ngOnInit() {
-        this.character.SetAttackCallback(() => { this.Attack(); });
     }
     Attack() {
         this.mainAnim.PlayAnimation(this.character.GetAttack());
+        this.interactionEventsService.DealDamage(this.character.GetAttackData());
     }
     ;
+    Update(dt) {
+        if (this.character.ResolverCDBar(dt))
+            this.Attack();
+    }
 };
+CharacterComponent.ctorParameters = () => [
+    { type: src_app_services_interaction_events_service__WEBPACK_IMPORTED_MODULE_2__["InteractionEventsService"] }
+];
 tslib__WEBPACK_IMPORTED_MODULE_0__["__decorate"]([
     Object(_angular_core__WEBPACK_IMPORTED_MODULE_1__["Input"])()
 ], CharacterComponent.prototype, "character", void 0);
-tslib__WEBPACK_IMPORTED_MODULE_0__["__decorate"]([
-    Object(_angular_core__WEBPACK_IMPORTED_MODULE_1__["Input"])()
-], CharacterComponent.prototype, "isPlayer", void 0);
 tslib__WEBPACK_IMPORTED_MODULE_0__["__decorate"]([
     Object(_angular_core__WEBPACK_IMPORTED_MODULE_1__["ViewChild"])('mainAnim', { static: false })
 ], CharacterComponent.prototype, "mainAnim", void 0);
@@ -453,10 +458,14 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _angular_core__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! @angular/core */ "./node_modules/@angular/core/fesm2015/core.js");
 /* harmony import */ var src_app_classes_player_character__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! src/app/classes/player-character */ "./src/app/classes/player-character.ts");
 /* harmony import */ var src_app_classes_character__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! src/app/classes/character */ "./src/app/classes/character.ts");
-/* harmony import */ var src_assets_jsons_wolf_json__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! src/assets/jsons/wolf.json */ "./src/assets/jsons/wolf.json");
-var src_assets_jsons_wolf_json__WEBPACK_IMPORTED_MODULE_4___namespace = /*#__PURE__*/__webpack_require__.t(/*! src/assets/jsons/wolf.json */ "./src/assets/jsons/wolf.json", 1);
-/* harmony import */ var src_assets_jsons_knight_json__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! src/assets/jsons/knight.json */ "./src/assets/jsons/knight.json");
-var src_assets_jsons_knight_json__WEBPACK_IMPORTED_MODULE_5___namespace = /*#__PURE__*/__webpack_require__.t(/*! src/assets/jsons/knight.json */ "./src/assets/jsons/knight.json", 1);
+/* harmony import */ var src_app_services_interaction_events_service__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! src/app/services/interaction-events.service */ "./src/app/services/interaction-events.service.ts");
+/* harmony import */ var src_assets_jsons_wolf_json__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! src/assets/jsons/wolf.json */ "./src/assets/jsons/wolf.json");
+var src_assets_jsons_wolf_json__WEBPACK_IMPORTED_MODULE_5___namespace = /*#__PURE__*/__webpack_require__.t(/*! src/assets/jsons/wolf.json */ "./src/assets/jsons/wolf.json", 1);
+/* harmony import */ var src_assets_jsons_knight_json__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! src/assets/jsons/knight.json */ "./src/assets/jsons/knight.json");
+var src_assets_jsons_knight_json__WEBPACK_IMPORTED_MODULE_6___namespace = /*#__PURE__*/__webpack_require__.t(/*! src/assets/jsons/knight.json */ "./src/assets/jsons/knight.json", 1);
+/* harmony import */ var _character_character_component__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ../character/character.component */ "./src/app/components/character/character.component.ts");
+
+
 
 
 
@@ -464,18 +473,35 @@ var src_assets_jsons_knight_json__WEBPACK_IMPORTED_MODULE_5___namespace = /*#__P
 
 
 let IngameComponent = class IngameComponent {
-    constructor() {
-        this.wolf = src_assets_jsons_wolf_json__WEBPACK_IMPORTED_MODULE_4__;
-        this.knight = src_assets_jsons_knight_json__WEBPACK_IMPORTED_MODULE_5__;
+    constructor(interactionEventsService) {
+        this.interactionEventsService = interactionEventsService;
+        this.wolf = src_assets_jsons_wolf_json__WEBPACK_IMPORTED_MODULE_5__;
+        this.knight = src_assets_jsons_knight_json__WEBPACK_IMPORTED_MODULE_6__;
         this.enemies = [];
     }
     ngOnInit() {
+        this.interactionEventsService.damage.subscribe((attackData) => {
+            if (attackData.isPlayer) {
+                setTimeout(() => {
+                    this.enemies[Math.floor(Math.random() * this.enemies.length)].TakeDamage(attackData.damage);
+                }, attackData.delay);
+            }
+            else {
+                setTimeout(() => {
+                    this.player.TakeDamage(attackData.damage);
+                }, attackData.delay);
+            }
+        });
         this.player = new src_app_classes_player_character__WEBPACK_IMPORTED_MODULE_2__["PlayerCharacter"](this.knight);
         this.enemies.push(new src_app_classes_character__WEBPACK_IMPORTED_MODULE_3__["Character"](this.wolf));
         setTimeout(() => {
             this.enemies.push(new src_app_classes_character__WEBPACK_IMPORTED_MODULE_3__["Character"](this.wolf));
         }, 5000);
+    }
+    ngAfterViewInit() {
         window.requestAnimationFrame((timestamp) => { this.Update(timestamp); });
+    }
+    ngOnDestroy() {
     }
     GridMonster(index) {
         return "grid-monster-" + this.enemies.length + "-" + index;
@@ -484,12 +510,19 @@ let IngameComponent = class IngameComponent {
         if (this.lastTime === undefined)
             this.lastTime = timestamp;
         this.elapsed = (timestamp - this.lastTime) / 1000;
+        this.characters.forEach((character) => {
+            character.Update(this.elapsed);
+        });
         this.lastTime = timestamp;
-        this.player.Update(this.elapsed);
-        this.enemies.forEach(enemy => enemy.Update(this.elapsed));
         window.requestAnimationFrame((timestamp) => { this.Update(timestamp); });
     }
 };
+IngameComponent.ctorParameters = () => [
+    { type: src_app_services_interaction_events_service__WEBPACK_IMPORTED_MODULE_4__["InteractionEventsService"] }
+];
+tslib__WEBPACK_IMPORTED_MODULE_0__["__decorate"]([
+    Object(_angular_core__WEBPACK_IMPORTED_MODULE_1__["ViewChildren"])(_character_character_component__WEBPACK_IMPORTED_MODULE_7__["CharacterComponent"])
+], IngameComponent.prototype, "characters", void 0);
 IngameComponent = tslib__WEBPACK_IMPORTED_MODULE_0__["__decorate"]([
     Object(_angular_core__WEBPACK_IMPORTED_MODULE_1__["Component"])({
         selector: 'app-ingame',
@@ -743,14 +776,49 @@ var EnumAnim;
 
 /***/ }),
 
+/***/ "./src/app/services/interaction-events.service.ts":
+/*!********************************************************!*\
+  !*** ./src/app/services/interaction-events.service.ts ***!
+  \********************************************************/
+/*! exports provided: InteractionEventsService */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "InteractionEventsService", function() { return InteractionEventsService; });
+/* harmony import */ var tslib__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! tslib */ "./node_modules/tslib/tslib.es6.js");
+/* harmony import */ var _angular_core__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! @angular/core */ "./node_modules/@angular/core/fesm2015/core.js");
+
+
+let InteractionEventsService = class InteractionEventsService {
+    constructor() {
+        this.damage = new _angular_core__WEBPACK_IMPORTED_MODULE_1__["EventEmitter"]();
+    }
+    DealDamage(attackData) {
+        this.damage.emit(attackData);
+    }
+};
+tslib__WEBPACK_IMPORTED_MODULE_0__["__decorate"]([
+    Object(_angular_core__WEBPACK_IMPORTED_MODULE_1__["Output"])()
+], InteractionEventsService.prototype, "damage", void 0);
+InteractionEventsService = tslib__WEBPACK_IMPORTED_MODULE_0__["__decorate"]([
+    Object(_angular_core__WEBPACK_IMPORTED_MODULE_1__["Injectable"])({
+        providedIn: 'root'
+    })
+], InteractionEventsService);
+
+
+
+/***/ }),
+
 /***/ "./src/assets/jsons/knight.json":
 /*!**************************************!*\
   !*** ./src/assets/jsons/knight.json ***!
   \**************************************/
-/*! exports provided: name, sizeX, sizeY, columnN, iddleAnim, attackAnim, health, coldDown, damage, height, default */
+/*! exports provided: name, sizeX, sizeY, columnN, iddleAnim, attackAnim, health, coldDown, damage, height, delayAttack, default */
 /***/ (function(module) {
 
-module.exports = JSON.parse("{\"name\":\"knight\",\"sizeX\":384,\"sizeY\":192,\"columnN\":14,\"iddleAnim\":{\"position\":0,\"length\":14,\"speed\":100,\"play\":0},\"attackAnim\":{\"position\":1,\"length\":14,\"speed\":70,\"play\":1},\"health\":100,\"coldDown\":4,\"damage\":50,\"height\":20}");
+module.exports = JSON.parse("{\"name\":\"knight\",\"sizeX\":384,\"sizeY\":192,\"columnN\":14,\"iddleAnim\":{\"position\":0,\"length\":14,\"speed\":100,\"play\":0},\"attackAnim\":{\"position\":1,\"length\":14,\"speed\":70,\"play\":1},\"health\":100,\"coldDown\":4,\"damage\":50,\"height\":20,\"delayAttack\":700}");
 
 /***/ }),
 
@@ -758,10 +826,10 @@ module.exports = JSON.parse("{\"name\":\"knight\",\"sizeX\":384,\"sizeY\":192,\"
 /*!************************************!*\
   !*** ./src/assets/jsons/wolf.json ***!
   \************************************/
-/*! exports provided: name, sizeX, sizeY, columnN, iddleAnim, attackAnim, health, coldDown, damage, height, default */
+/*! exports provided: name, sizeX, sizeY, columnN, iddleAnim, attackAnim, health, coldDown, damage, height, delayAttack, default */
 /***/ (function(module) {
 
-module.exports = JSON.parse("{\"name\":\"wolf\",\"sizeX\":388,\"sizeY\":192,\"columnN\":15,\"iddleAnim\":{\"position\":0,\"length\":12,\"speed\":100,\"play\":0},\"attackAnim\":{\"position\":1,\"length\":15,\"speed\":80,\"play\":1},\"health\":100,\"coldDown\":6,\"damage\":50,\"height\":30}");
+module.exports = JSON.parse("{\"name\":\"wolf\",\"sizeX\":388,\"sizeY\":192,\"columnN\":15,\"iddleAnim\":{\"position\":0,\"length\":12,\"speed\":100,\"play\":0},\"attackAnim\":{\"position\":1,\"length\":15,\"speed\":80,\"play\":1},\"health\":65,\"coldDown\":6,\"damage\":20,\"height\":30,\"delayAttack\":750}");
 
 /***/ }),
 

@@ -18,5 +18,6 @@
     "health": 100,
     "coldDown": 4,
     "damage": 50,
-    "height": 20
+    "height": 20,
+    "delayAttack":700
 }
